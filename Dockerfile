@@ -3,8 +3,8 @@ FROM debian:buster
 RUN	apt-get -y update && apt-get -y install wget \
 	nginx \
 	mariadb-server \
-	php7.3 php-mysql php-fpm php-pdo php-gd php-cli php-mbstring \
-	openssl
+	openssl \
+	php7.3 php7.3-mysql php7.3-fpm php7.3-pdo php7.3-gd php7.3-cli php7.3-mbstring
 
 WORKDIR	/var/www/localhost
 COPY ./srcs/init.sh /var/www/
@@ -22,13 +22,11 @@ RUN	wget https://wordpress.org/latest.tar.gz && \
 	tar -xvzf latest.tar.gz && rm -rf latest.tar.gz
 COPY ./srcs/wp-config.php /var/www/localhost/wordpress
 
-RUN openssl req -x509 -nodes -days 365 -subj "/C=FR/ST=75/L=Paris/O=42/OU=mde-la-s/CN=localhost" -newkey rsa:2048 -keyout /etc/ssl/nginx-selfsigned.key -out /etc/ssl/nginx-selfsigned.crt;
-
 RUN chown -R www-data:www-data /var/www/localhost && \
 	chmod -R 755 /var/www/localhost && \
 	chmod 777 /var/www/init.sh
 
-COPY ./srcs/init.sh ./
+ENV	AUTOINDEX="on"
 
 EXPOSE 80 443
 
